@@ -8,24 +8,31 @@ export default function SmallCalendar() {
   const [currentMonthIdx, setCurrentMonthIdx] = useState(dayjs().month())
   const [currentMonth, setCurrentMonth] = useState(getMonth())
 
-  // Updates 
+  // React hook that takes effect when currentMonthIdx changes
+  // Occurs when small calendar chevrons change it
   useEffect(() => {
     setCurrentMonth(getMonth(currentMonthIdx))
   }, [currentMonthIdx]);
 
+  // React hook that takes effect when monthIdx changes
+  // Occurs when big calendar chevrons update it
   const { monthIndex } = useContext(GlobalContext)
   useEffect(() => {
     setCurrentMonthIdx(monthIndex)
   }, [monthIndex]);
 
+  // actionEventHandler for chevron_left
   function handlePrevMonth() {
     setCurrentMonthIdx(currentMonthIdx - 1)
   }
 
+  // actionEventHandler for chevron_right
   function handleNextMonth() {
     setCurrentMonthIdx(currentMonthIdx + 1)
   }
 
+  // Function dynamically dependent on state of day
+  // Appends given "return" properties to the currentDay buttons className
   function getCurrSmallDay(day) {
     const format = "DD-MM-YY"
     const nowDay = dayjs().format(format)
