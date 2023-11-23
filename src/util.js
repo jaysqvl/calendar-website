@@ -4,6 +4,7 @@ const MAX_ROWS = 5
 const MAX_COLUMNS = 7
 
 export function getMonth(month = dayjs().month()) {
+    month = Math.floor(month)
     const year = dayjs().year()
     
     // This retrieves the day of the week of the first day of the month
@@ -19,7 +20,7 @@ export function getMonth(month = dayjs().month()) {
             // This dayjs object is the current month/year but if we go into the negatives we underflow
             return dayjs(new Date(year, month, currMonthCount))
             // If we go past the number of days in the month, we overflow (Start again at 1 in the next month)
-        })
-    })
+        });
+    });
     return daysMatrix
 }
