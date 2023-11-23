@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from 'react'
 import dayjs from 'dayjs'
 import { getMonth } from '../util.js'
 import GlobalContext from "../context/GlobalContext.js"
-import Day from './Day.js'
 
 export default function SmallCalendar() {
   const [currentMonthIdx, setCurrentMonthIdx] = useState(dayjs().month())
@@ -16,7 +15,7 @@ export default function SmallCalendar() {
 
   // React hook that takes effect when monthIdx changes
   // Occurs when big calendar chevrons update it
-  const { monthIndex } = useContext(GlobalContext)
+  const { monthIndex, setSmallCalendarMonth , setDaySelected, daySelected} = useContext(GlobalContext)
   useEffect(() => {
     setCurrentMonthIdx(monthIndex)
   }, [monthIndex]);
@@ -35,10 +34,14 @@ export default function SmallCalendar() {
   // Appends given "return" properties to the currentDay buttons className
   function getCurrSmallDay(day) {
     const format = "DD-MM-YY"
-    const nowDay = dayjs().format(format)
-    const currDay = day.format(format)
-    if (nowDay === currDay) {
+    const dayjsCurrDay = dayjs().format(format)
+    const inputtedDay = day.format(format)
+    const slcDay = daySelected && daySelected.format(format)
+
+    if (inputtedDay === dayjsCurrDay) {
       return "bg-blue-600 text-white rounded-full";
+    } else if (inputtedDay === slcDay) {
+      return "bg-blue-100 rounded-full text-blue-600 font-bold";
     } else {
       return "";
     }
@@ -79,7 +82,12 @@ export default function SmallCalendar() {
           {currentMonth.map((row, i) => (
             <React.Fragment key={i}>
               {row.map((day, idx) => (
-                <button key={idx} className={`py-1 w-full ${getCurrSmallDay(day)}`}>
+                <button key={idx} 
+                        onClick={() => {
+                          setSmallCalendarMonth(currentMonthIdx)
+                          setDaySelected(day)
+                        }}
+                        className={`py-1 w-full ${getCurrSmallDay(day)}`}> 
                   <span className="text-sm">
                     {day.format('D')}
                   </span>
