@@ -1,4 +1,6 @@
-# Getting Started with Create React App
+# Calendar Website
+## Technologies used
+Tailwindcss, React.js, Node.js
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
