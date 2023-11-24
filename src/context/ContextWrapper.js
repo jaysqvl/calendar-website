@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react'
+import React, { useState, useEffect, useReducer, useMemo } from 'react'
 import GlobalContext from './GlobalContext'
 import dayjs from 'dayjs'
 
@@ -29,6 +29,16 @@ export default function ContextWrapper(props) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [labels, setLabels] = useState([]);
   const [savedEvents, dispatchCalEvent] = useReducer(savedEventsReducer, [], initEvents);
+
+  const filteredEvents = useMemo(() => {
+    return (
+      savedEvents.filter(evt => 
+        labels
+          .filter(lbl => lbl.checked)
+          .map((lbl) => lbl.label)
+          .includes(evt.label))
+    );
+  }, [savedEvents, labels])
 
   useEffect(() => {
     localStorage.setItem('savedEvents', JSON.stringify(savedEvents))
@@ -64,6 +74,10 @@ export default function ContextWrapper(props) {
     })
   }, [savedEvents]);
 
+  function updateLabel(label) {
+    setLabels(labels.map((lbl) => lbl.label === label.label ? label : lbl))
+  }
+
   return (
     <GlobalContext.Provider 
       value={{
@@ -81,6 +95,8 @@ export default function ContextWrapper(props) {
         dispatchCalEvent,
         labels,
         setLabels,
+        updateLabel,
+        filteredEvents,
         }}
       >
         {props.children}

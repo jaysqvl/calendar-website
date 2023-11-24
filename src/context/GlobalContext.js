@@ -15,6 +15,8 @@ const GlobalContext = React.createContext({
     dispatchCalEvent: ({type, payload}) => {},
     labels: [],
     setLabels: () => {},
+    updateLabel: (label) => {},
+    filteredEvents: [],
 });
 
 export default GlobalContext;

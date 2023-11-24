@@ -58,14 +58,13 @@ export default function EventModel() {
                         >
                             delete
                         </span>
-                    )} 
-                </div>
-
-                <button onClick={() => {setShowEventModel(false)}}>
+                    )}
+                    <button onClick={() => {setShowEventModel(false)}}>
                     <span className="material-icons-outlined text-gray-400">
                         close
                     </span>
-                </button>
+                </button> 
+                </div>
             </header>
             <div className="p-3">
                 <div className="grid grid-cols-1/5 items-end gap-y-7">
