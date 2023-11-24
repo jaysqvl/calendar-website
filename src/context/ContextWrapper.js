@@ -26,18 +26,19 @@ export default function ContextWrapper(props) {
   const [smallCalendarMonth, setSmallCalendarMonth] = useState(null);
   const [daySelected, setDaySelected] = useState(dayjs());
   const [showEventModel, setShowEventModel] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null)
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [labels, setLabels] = useState([]);
   const [savedEvents, dispatchCalEvent] = useReducer(savedEventsReducer, [], initEvents);
 
   useEffect(() => {
     localStorage.setItem('savedEvents', JSON.stringify(savedEvents))
-  }, [savedEvents])
+  }, [savedEvents]);
 
   useEffect(() => {
     if (smallCalendarMonth !== null) {
       setMonthIndex(smallCalendarMonth)
     }
-  }, [smallCalendarMonth])
+  }, [smallCalendarMonth]);
 
   useEffect(() => {
     if (!showEventModel) {
@@ -49,7 +50,19 @@ export default function ContextWrapper(props) {
     if (daySelected !== null) {
       setDaySelected(daySelected)
     }
-  }, [daySelected])
+  }, [daySelected]);
+
+  useEffect(() => {
+    setLabels((prevLabels) => {
+      return [...new Set( savedEvents.map(evt => evt.label))].map(label => {
+        const currentLabel = prevLabels.find(lbl => lbl.label === label)
+        return {
+          label,
+          checked: currentLabel ? currentLabel.checked : true,
+        }
+      })
+    })
+  }, [savedEvents]);
 
   return (
     <GlobalContext.Provider 
@@ -66,6 +79,8 @@ export default function ContextWrapper(props) {
         setSelectedEvent,
         savedEvents,
         dispatchCalEvent,
+        labels,
+        setLabels,
         }}
       >
         {props.children}
