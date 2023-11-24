@@ -1,9 +1,44 @@
 import React, { useContext, useState } from 'react'
 import GlobalContext from '../context/GlobalContext';
 
+const labelsClasses = ["indigo", "gray", "green", "blue", "red", "purple"];
+
 export default function EventModel() {
-  const [title, setTitle] = useState('')
-  const { setShowEventModel, daySelected} = useContext(GlobalContext)
+  const { setShowEventModel, daySelected, dispatchCalEvent, selectedEvent} = useContext(GlobalContext)
+
+  const [title, setTitle] = useState(selectedEvent ? selectedEvent.title : "")
+  const [location, setLocation] = useState(selectedEvent ? selectedEvent.location : "")
+  const [description, setDescription] = useState(selectedEvent ? selectedEvent.description : "")
+  const [selectedLabel, setSelectedLabel] = useState(
+    selectedEvent 
+    ? labelsClasses.find((lbl) => lbl === selectedEvent.label)
+    : labelsClasses[0]
+  );
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    const calendarEvent = {
+        title,
+        location,
+        description,
+        label: selectedLabel,
+        day: daySelected.valueOf(),
+        id: selectedEvent ? selectedEvent.id : Date.now()
+    }
+    if (selectedEvent) {
+        dispatchCalEvent({type: 'update', payload: calendarEvent});
+    } else {
+        dispatchCalEvent({type: 'push', payload: calendarEvent});
+    }
+
+    // Reset form fields
+    setTitle('');
+    setLocation('');
+    setDescription('');
+    setSelectedLabel(labelsClasses[0]);
+
+    setShowEventModel(false);
+  }
 
   return (
     <div className="h-screen w-full fixed left-0 top-0 flex justify-center items-center">
@@ -12,6 +47,20 @@ export default function EventModel() {
                 <span className="material-icons-outlined text-gray-400">
                     drag_handle
                 </span>
+                
+                <div>
+                    {selectedEvent !== null && (
+                        <span 
+                            onClick={() => {dispatchCalEvent({type: "delete", payload: selectedEvent});
+                            setShowEventModel(false);
+                        }}
+                            className="material-icons-outlined text-gray-400"
+                        >
+                            delete
+                        </span>
+                    )} 
+                </div>
+
                 <button onClick={() => {setShowEventModel(false)}}>
                     <span className="material-icons-outlined text-gray-400">
                         close
@@ -35,8 +84,51 @@ export default function EventModel() {
                     <p>
                        {daySelected.format("dddd, MMMM, DD")}
                     </p>
+                    <span className="material-icons-outlined text-gray-400">
+                        location_on
+                    </span>
+                    <input  type="text" 
+                            name="location" 
+                            placeholder="Add a location" 
+                            value={location}
+                            required
+                            className="pt-3 border-0 text-gray-600 text-sm pb-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
+                            onChange={(e) => setLocation(e.target.value)}>
+                    </input>
+                    <span className="material-icons-outlined text-gray-400">
+                        segment
+                    </span>
+                    <input  type="text" 
+                            name="description" 
+                            placeholder="Add a description" 
+                            value={description} 
+                            className="pt-3 border-0 text-gray-600 text-sm pb-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
+                            onChange={(e) => setDescription(e.target.value)}>
+                    </input>
+                    <span className="material-icons-outlined text-gray-400">
+                        bookmark_border
+                    </span>
+                    <div className="flex gap-x-2">
+                        {labelsClasses.map((lblClass, i) =>
+                            <span key={i}
+                                onClick={() => {setSelectedLabel(lblClass)}}
+                                className={`bg-${lblClass}-500 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer`}>
+                                    {selectedLabel === lblClass && (
+                                <span className="material-icons-outlined text-white text-sm">
+                                    check
+                                </span>)}
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
+            <footer className="flex justify-end border-t p-3 mt-5">
+                <button type="submit"
+                        onClick={handleSubmit}
+                        className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white">
+                    Save
+                </button>
+            </footer>
         </form>
     </div>
   );
