@@ -1,4 +1,4 @@
-# Calendar Website
+# NouveauCalendar
 ## Technologies used
 Tailwindcss, React.js, Node.js
 
